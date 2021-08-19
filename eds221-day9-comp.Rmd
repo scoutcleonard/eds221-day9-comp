@@ -7,5 +7,108 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(palmerpenguins)
+library(lubridate)
+library(kableExtra)
+library(janitor)
 ```
+
+### janitor::get_dupes()
+returns duplicated observations (any rows where everything is the same across all variables?)
+
+checks for all columns unless specified as otherwise
+```{r}
+starwars_dupes <- get_dupes(starwars)
+
+starwars_dupes_names <- starwars %>% 
+  get_dupes(name)
+
+starwars_dupes_eye_color <- starwars %>% 
+  get_dupes(eye_color, hair_color)
+
+starwars_dupes_eye_color
+#tells how many rows exist for observations with the same eye color and hair color
+```
+### dplyr::across()
+
+dplry::across() allows you to perform functions across multiple comuns that you specify 
+
+```{r}
+#convert anything that is a character into lowercase
+sw_across <- starwars %>% 
+  mutate(across(where(is.character), tolower))
+
+sw_across
+```
+
+
+```{r}
+starwars %>% 
+  group_by(homeworld) %>% 
+  summarize(across(where(is.numeric), mean, na.rm = TRUE))
+
+#NaN comes from 0/0 values 
+#you can also give across a range of collumns using across(col_a:col_b, function)
+```
+
+### basic / common troubleshooting stuff 
+
+```{r}
+starwars %>% 
+  filter(homeworld == "Naboo")
+```
+
+```{r}
+starwars %>% 
+  separate(skin_color, into = c("col_1", "col_2"), sep = ",")
+```
+
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point()
+```
+
+
+```{r}
+#convert all numeric data to character data
+#fct_relevel lets you change the order of variables
+#unite is the opposite if separate! bring tog columns! 
+troubleshooting <- penguins %>% 
+  mutate(across(where(is.numeric), as.character)) %>%
+  mutate(island = fct_relevel(island, c("Dream", "Biscoe", "Torgersen"))) %>% 
+  unite(island_yr, c(island, year), sep = "_") %>% 
+  filter(species %in% c("Adelie", "Chinstrap")) %>% 
+  relocate(island_yr, .after = species) %>% 
+  rename(penguin_spp = species)
+
+```
+
+Reprex needs to be totally self contained. This means libraries should be included in the code. 
+Make a simple dataset! We use tribble here :)
+
+Select code, copy to clipboard, run reprex in the console! 
+
+Don't run it again, because your reprex gets copied to your clipboard after running.
+```{r}
+library(tidyverse)
+
+df <- tribble(
+  ~name, ~height, ~hair_color,
+  "Teddy", 2.2, "brown",
+  "Khora", 3.1, "white",
+  "Waffle", 1.0, "tan"
+)
+
+df %>% 
+  filter(name == "Waffle")
+
+
+```
+
+
+
+
+
 
