@@ -1,0 +1,11 @@
+---
+title: "Troubleshooting, Tables, and More Wrangling"
+author: "Scout Leonard"
+date: "8/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
